@@ -1,13 +1,10 @@
 CC=gcc
-CFLAGS=-g -Wall -Werror
+CFLAGS=-m32 -fno-stack-protector -z execstack
+SOURCE=example.c
+OUTPUT=example
 
-all: example
-
-example: example.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-example.o: example.c
-	$(CC) $(CFLAGS) -c $<
+all: 
+	$(CC) $(SOURCE) $(CFLAGS) -o $(OUTPUT)
 
 clean:
 	rm -f example example.o
