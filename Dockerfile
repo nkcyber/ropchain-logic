@@ -7,7 +7,6 @@ RUN apt update && \
 		vim \
 		gdb \
 		build-essential \
-		make \
 	 && apt-get clean all
 
 WORKDIR /app
@@ -15,13 +14,13 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-COPY example.c .
-# RUN gcc -no-pie -fno-stack-protector -z execstack -static example.c -o example
-# RUN gcc -m32 -fno-stack-protector -z execstack example.c -o example
+COPY Makefile example.c ./
+
 RUN make
 
-
 COPY attack.py .
+
+## TODO: do not run this as root
 
 CMD ["/bin/sh"]
 

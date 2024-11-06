@@ -1,27 +1,52 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-void rop1() {
-	printf("ROP 1!\n");
+/* void win_function(int arg1, int arg2) { */
+void win_function() {
+	/* printf("You won! arg1: 0x%x, arg2: 0x%x\n", arg1, arg2); */
+	printf("You won!\n");
 }
 
-void rop2(int a) {
-	printf("ROP 2: %x!\n", a);
+void vulnerable_function() {
+	char buffer[32];  // Small buffer susceptible to overflow
+	printf("Enter some data: ");
+	fgets(buffer, 100, stdin); // improper bounds checking
 }
 
-void rop3(int a, int b) {
-	printf("ROP 3: %x, %x!\n", a, b);
-}
-
-void vulnerable(char* string) {
-	char buffer[100];
-	strcpy(buffer, string);
-}
-
-int main(int argc, char** argv) {
-	vulnerable(argv[1]);
+int main() {
+	printf("start...");
+	vulnerable_function();
+	printf("done!");
 	return 0;
 }
+
+
+/* void rop1() { */
+/* printf("ROP 1!\n"); */
+/* } */
+
+/* [> void rop2(int a) { <] */
+/* void rop2() { */
+/* printf("ROP 2\n"); */
+/* } */
+
+/* [> void rop3(int a, int b) { <] */
+/* void rop3() { */
+/* printf("ROP 3\n"); */
+/* } */
+
+/* void vulnerable(char* string) { */
+/* char buffer[100]; */
+/* strcpy(buffer, string); */
+/* } */
+
+/* int main(int argc, char** argv) { */
+/* vulnerable(argv[1]); */
+/* return 0; */
+/* } */
 
 /* #include <stdio.h> */
 /* #include <stdlib.h> */
