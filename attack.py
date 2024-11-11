@@ -2,19 +2,27 @@
 
 from pwn import *
 from itertools import cycle
+import os
+
+def get_corefile_location(executable_name: str, pid: int) -> os.PathLike[str]:
+    with open("/proc/sys/kernel/core_pattern") as f:
+        core_pattern = f.read()
+        assert "%e" and "%p" in core_pattern
+        return core_pattern.replace("%e", executable_name).replace("%p", str(pid)).strip()
 
 # Generate a pattern of 100 bytes, larger than the buffer size
-pattern = cyclic(100)
+pattern = cyclic(1000)
 
 # Start the vulnerable binary
 with process('./example') as p:
     # Send the pattern as input
+    print("current pid", p.pid)
     p.sendline(pattern)
     p.wait()  # Wait for the program to crash
 
     # Examine the crash to find the offset
-    core = p.corefile  # Load the core dump created by the crash
-    offset = cyclic_find(core.read(core.rsp, 4))  # rsp holds the overwritten return address
+    core = Coredump(get_corefile_location("example", p.pid))
+    offset = cyclic_find(core.read(core.eip, 4))  # rsp holds the overwritten return address
 
     print(f"Offset to overwrite return address: {offset}")
 
