@@ -9,21 +9,26 @@ def get_corefile_location(executable_name: str, pid: int) -> os.PathLike[str]:
         assert "%e" and "%p" in core_pattern
         return core_pattern.replace("%e", executable_name).replace("%p", str(pid)).strip()
 
-payload = b'A'*77
-# Start the vulnerable binary
-with process(['./example', payload]) as p:
-    p.wait()  # Wait for the program to crash
+for i in range(65, 100):
+    print(f"trying {i=}")
+    try:
+        payload = b'A'*i
+        # Start the vulnerable binary
+        with process(['./example', payload]) as p:
+            p.wait()  # Wait for the program to crash
 
-# Examine the crash to find the offset
-core = Coredump(get_corefile_location("example", p.pid))
+        # Examine the crash to find the offset
+        core = Coredump(get_corefile_location("example", p.pid))
 
-table = PrettyTable()
-table.field_names = ["register", "value"]
-sorted_registers = dict(sorted(core.registers.items(), key=lambda item: -item[1]))
-for k,v in sorted_registers.items():
-    table.add_row([k,v])
+        table = PrettyTable()
+        table.align = 'l'
+        table.field_names = ["register", "hex value", "decimal value"]
+        sorted_registers = dict(sorted(core.registers.items(), key=lambda item: -item[1]))
+        for k,v in sorted_registers.items():
+            table.add_row([k,hex(v), v])
 
-print(table)
-
-print(f"Offset to overwrite return address: {offset}")
+        print(table)
+    except Exception as e:
+        print(e)
+    input('...')
 
