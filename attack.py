@@ -11,20 +11,27 @@ def get_corefile_location(executable_name: str, pid: int) -> os.PathLike[str]:
         return core_pattern.replace("%e", executable_name).replace("%p", str(pid)).strip()
 
 # Generate a pattern of 100 bytes, larger than the buffer size
-pattern = cyclic(1000)
+
+i = 128
+pattern = cyclic(i)
 
 # Start the vulnerable binary
-with process('./example') as p:
+with process(['./example', pattern]) as p:
     # Send the pattern as input
     print("current pid", p.pid)
-    p.sendline(pattern)
     p.wait()  # Wait for the program to crash
 
-    # Examine the crash to find the offset
-    core = Coredump(get_corefile_location("example", p.pid))
-    offset = cyclic_find(core.read(core.eip, 4))  # rsp holds the overwritten return address
+# Examine the crash to find the offset
+core = Coredump(get_corefile_location("example", p.pid))
+offset = cyclic_find(core.read(core.eip, 4))  # rsp holds the overwritten return address
 
-    print(f"Offset to overwrite return address: {offset}")
+for k,v in core.registers.items():
+    new_offset = cyclic_find(v)
+    print(f"{k=},{v=},{new_offset}")
+    if new_offset != -1:
+        print(f"overwrote register {k} with value {v} at offset {new_offset}")
+
+print(f"Offset to overwrite return address: {offset}")
 
 
 """
