@@ -18,7 +18,7 @@ COPY Makefile example.c ./
 
 RUN make
 
-COPY attack.py .
+COPY attack.py attack2.py .
 
 ## TODO: do not run this as root
 

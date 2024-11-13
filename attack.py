@@ -12,13 +12,19 @@ def get_corefile_location(executable_name: str, pid: int) -> os.PathLike[str]:
 
 # Generate a pattern of 100 bytes, larger than the buffer size
 
+# 64 -> instruction pointer = \0
+# 65 -> instruction pointer = \0
+# 66 -> instruction pointer = noise
+# 67 -> instruction pointer = 41413d
+
 i = 128
 pattern = cyclic(i)
 
 # Start the vulnerable binary
-with process(['./example', pattern]) as p:
+with process('./example') as p:
     # Send the pattern as input
     print("current pid", p.pid)
+    p.sendline(pattern)
     p.wait()  # Wait for the program to crash
 
 # Examine the crash to find the offset
@@ -27,7 +33,7 @@ offset = cyclic_find(core.read(core.eip, 4))  # rsp holds the overwritten return
 
 for k,v in core.registers.items():
     new_offset = cyclic_find(v)
-    print(f"{k=},{v=},{new_offset}")
+    # print(f"{k=},{v=},{new_offset}")
     if new_offset != -1:
         print(f"overwrote register {k} with value {v} at offset {new_offset}")
 
