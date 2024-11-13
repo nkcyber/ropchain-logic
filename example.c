@@ -7,5 +7,7 @@ void win() {
 }
 int main(int argc, char** argv) {
     char buffer[64];
+    puts("welcome!");
     strcpy(buffer, argv[1]);
+    puts("goodbye!");
 }
