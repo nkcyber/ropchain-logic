@@ -14,13 +14,12 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-COPY Makefile example.c ./
-
+COPY Makefile example.c attack.py create_table.py flag.txt .
 RUN make
+RUN useradd -ms /bin/bash user
+RUN chmod 400 flag.txt && chmod +s example && chmod o+r /tmp && chown user attack.py && chgrp user attack.py
 
-COPY attack.py create_table.py .
-
-## TODO: do not run this as root
+USER user
 
 CMD ["/bin/sh"]
 
