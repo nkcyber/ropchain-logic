@@ -12,7 +12,7 @@ def get_corefile_location(executable_name: str, pid: int) -> os.PathLike[str]:
 for i in range(65, 100):
     print(f"trying {i=}")
     try:
-        payload = b'A'*i
+        payload = cyclic(i)
         # Start the vulnerable binary
         with process(['./example', payload]) as p:
             p.wait()  # Wait for the program to crash
@@ -22,10 +22,10 @@ for i in range(65, 100):
 
         table = PrettyTable()
         table.align = 'l'
-        table.field_names = ["register", "hex value", "decimal value"]
+        table.field_names = ["register", "hex value", "decimal value", "cyclic_find"]
         sorted_registers = dict(sorted(core.registers.items(), key=lambda item: -item[1]))
         for k,v in sorted_registers.items():
-            table.add_row([k,hex(v), v])
+            table.add_row([k,hex(v), v, cyclic_find(v)])
 
         print(table)
     except Exception as e:
