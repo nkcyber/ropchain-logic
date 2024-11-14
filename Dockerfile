@@ -24,6 +24,7 @@ RUN chmod 400 flag.txt && \
 	chgrp user attack.py && \
 	ulimit -c unlimited && \
 	# chown 4755 create_table.py && \
+	cp example example-crash && \
 	chmod 4755 example
 
 USER user
