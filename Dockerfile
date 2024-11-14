@@ -18,11 +18,12 @@ COPY Makefile example.c attack.py create_table.py flag.txt .
 RUN make
 RUN useradd -ms /bin/bash user
 RUN useradd -ms /bin/bash john
-RUN rm -f /bin/sh && ln -s /bin/bash /bin/sh
 RUN chmod 400 flag.txt && \
 	chmod o+r /tmp && \
 	chown user attack.py && \
 	chgrp user attack.py && \
+	ulimit -c unlimited && \
+	# chown 4755 create_table.py && \
 	chmod 4755 example
 
 USER user

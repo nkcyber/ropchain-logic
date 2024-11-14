@@ -1,21 +1,12 @@
-// https://docs.pwntools.com/en/stable/elf/corefile.html#using-corefiles-to-automate-exploitation
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 
 void win() {
-	printf("you got the shell!\nHere is the flag: ");
-    char buffer[256];
-    FILE *fp = fopen("flag.txt", "r");
-    if (fp == NULL) {
-        printf("Error opening file.\n");
-        return;
-    }
-    if (fgets(buffer, sizeof(buffer), fp) != NULL) {
-        printf("%s", buffer);
-    }
-    fclose(fp);
+	puts("you got the shell! here's the flag:");
+	char *args[] = {"cat", "flag.txt", NULL};
+	execve("/bin/cat", args, NULL);
 }
 
 void bof(char* input) {
