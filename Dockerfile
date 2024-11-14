@@ -17,7 +17,8 @@ RUN pip3 install -r requirements.txt
 COPY Makefile example.c attack.py create_table.py flag.txt .
 RUN make
 RUN useradd -ms /bin/bash user
-RUN chmod 400 flag.txt && chmod +s example && chmod o+r /tmp && chown user attack.py && chgrp user attack.py
+RUN useradd -ms /bin/bash john
+RUN chmod 400 flag.txt && chmod o+r /tmp && chown user attack.py && chgrp user attack.py && chgrp user example && chgrp john example && chmod +s example
 
 USER user
 

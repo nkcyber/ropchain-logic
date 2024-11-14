@@ -5,12 +5,7 @@ from pwn import *
 from itertools import cycle
 
 elf = ELF("./example")
-
-with elf.process() as p:
-    # To compensate for PIE, we must know the offset at runtime.
-    base_address = p.libs()['/app/example']
-    # Then, we ensure our functions are offset by that amount.
-    elf.address = base_address
+elf.address = elf.libs['/app/example']
 
 # Now, we can create our attack.
 ## --------------
