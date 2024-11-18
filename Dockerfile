@@ -11,11 +11,10 @@ RUN apt update && \
 	 && apt-get clean all
 
 WORKDIR /app
-
-COPY requirements.txt .
-RUN pip3 install -r requirements.txt
-
 ARG LAB_SOURCE
+
+COPY $LAB_SOURCE/requirements.txt .
+RUN pip3 install -r requirements.txt
 
 COPY $LAB_SOURCE/Makefile $LAB_SOURCE/example.c $LAB_SOURCE/attack.py $LAB_SOURCE/create_table.py $LAB_SOURCE/flag.txt .
 RUN make
