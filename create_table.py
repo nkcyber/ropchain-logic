@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 def get_corefile_location(executable_name: str, pid: int) -> os.PathLike[str]:
     with open("/proc/sys/kernel/core_pattern") as f:
         core_pattern = f.read()
-        assert "%e" and "%p" in core_pattern
+        assert "%e" in core_pattern and "%p" in core_pattern
         return core_pattern.replace("%e", executable_name).replace("%p", str(pid)).strip()
 
 BUFFER_SIZE = 64
