@@ -15,7 +15,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-COPY Makefile example.c attack.py create_table.py flag.txt .
+ARG LAB_SOURCE
+
+COPY $LAB_SOURCE/Makefile $LAB_SOURCE/example.c $LAB_SOURCE/attack.py $LAB_SOURCE/create_table.py $LAB_SOURCE/flag.txt .
 RUN make
 RUN useradd -ms /bin/bash user
 # This adds all files and sets appropriate permissions.
