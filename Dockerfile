@@ -21,7 +21,7 @@ RUN useradd -ms /bin/bash user
 # This adds all files and sets appropriate permissions.
 # Note that it's important for "example" to be a root-owned Set-UID binary,
 # and for "flag.txt" to be only accessible as root.
-RUN chmod 400 flag.txt && \
+RUN chmod 600 flag.txt && \
 	chown user attack.py && \
 	chgrp user attack.py && \
 	cp example example-crash && \
