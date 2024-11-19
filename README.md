@@ -35,5 +35,3 @@ If you don't want to use that, delete the [lines that expect the setup scripts](
 - <https://ir0nstone.gitbook.io/notes/binexp/stack/pie/pie-bypass>
 - <https://docs.pwntools.com/en/stable/elf/corefile.html>
 
-However, I don't beleive I've copied anything directly.
-
