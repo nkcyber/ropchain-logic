@@ -26,7 +26,7 @@ If you don't want to use that, delete the [lines that expect the setup scripts](
 
 ## Resources I used
 
-- <https://textbook.cs161.org/memory-safety/x86.html#:~:text=eip%20is%20the%20instruction%20pointer,of%20the%20current%20stack%20frame.>
+- <https://textbook.cs161.org/memory-safety/x86.html>
 - <https://stackoverflow.com/questions/69559640/how-can-i-get-a-corefile-for-a-pe-in-python-like-i-can-with-pwntools-for-an-elf>
 - <https://tc.gts3.org/cs6265/tut/tut06-01-rop.html>
 - <https://github.com/Gallopsled/pwntools-tutorial/blob/master/rop.md>
